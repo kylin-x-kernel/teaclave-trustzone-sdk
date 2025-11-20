@@ -31,7 +31,7 @@ export CROSS_COMPILE32="${CROSS_COMPILE32:-arm-linux-gnueabihf-}"
 export CROSS_COMPILE64="${CROSS_COMPILE64:-aarch64-linux-gnu-}"
 
 # build optee_os and optee_client for qemu_v8
-git clone https://github.com/OP-TEE/optee_os.git -b $OPTEE_VERSION $OPTEE_DIR/optee_os
+git clone https://github.com/kylin-x-kernel/optee_os.git -b kylin $OPTEE_DIR/optee_os
 # set CFG_TA_FLOAT_SUPPORT=n as workaround to fix the building error of 32bit tls TAs:
 #   multiple definition of `__aeabi_fcmple' (`__aeabi_fcmpeq' and others)
 # This means the __aeabi functions are defined both in Rustc compiler_builtins and optee libutils.

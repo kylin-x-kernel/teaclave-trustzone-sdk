@@ -17,6 +17,10 @@
 
 FROM ubuntu:24.04 AS no-std-build-env
 
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+
 # Base environment
 ENV TEACLAVE_TOOLCHAIN_BASE=/opt/teaclave
 ENV DEBIAN_FRONTEND=noninteractive
@@ -30,14 +34,31 @@ WORKDIR ${TEACLAVE_TOOLCHAIN_BASE}/setup
 ARG OPTEE_VERSION
 ENV OPTEE_VERSION=${OPTEE_VERSION}
 
-RUN ./install_dependencies.sh 
-RUN . ./bootstrap_env && ./prepare_emulator_images.sh 
+RUN ./install_dependencies.sh
+
+# RUN . ./bootstrap_env && ./prepare_emulator_images.sh 
+# In starryOS we don't need emulator
+RUN . ./bootstrap_env
 
 # Copy rust-toolchain.toml to root so it applies container-wide
 COPY rust-toolchain.toml /rust-toolchain.toml
 RUN . ./bootstrap_env && ./setup_toolchain.sh 
 
+# Set up git proxy if needed
+RUN git config --global http.proxy ${HTTP_PROXY} && \
+    git config --global https.proxy ${HTTPS_PROXY}
+
 RUN . ./bootstrap_env && ./build_optee_libraries.sh 
+
+# Remove git proxy
+RUN git config --global --unset http.proxy && \
+    git config --global --unset https.proxy
+
+# Install aarch64-linux-musl cross-compilation toolchain
+RUN cd ${TEACLAVE_TOOLCHAIN_BASE} && \
+    wget -q https://musl.cc/aarch64-linux-musl-cross.tgz && \
+    tar -xzf aarch64-linux-musl-cross.tgz && \
+    rm aarch64-linux-musl-cross.tgz
 
 # Set up shell environment and link useful scripts
 COPY scripts/runtime/bin ${TEACLAVE_TOOLCHAIN_BASE}/bin

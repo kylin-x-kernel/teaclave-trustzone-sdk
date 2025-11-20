@@ -44,18 +44,20 @@ EOF
 # Set up bash profile with all necessary environment sources
 setup_bash_profile() {
     echo "Setting up bash profile environment..."
-    
+
     # Clear existing bashrc to avoid circular sourcing
     > ~/.bashrc
-    
+
     # Add core environment sources to .profile (preserve any existing build-time setup)
     cat >> ~/.profile << 'EOF'
 # Teaclave TrustZone SDK Environment Setup (added by entrypoint)
 source ${TEACLAVE_TOOLCHAIN_BASE}/setup/bootstrap_env
 source ${TEACLAVE_TOOLCHAIN_BASE}/environment
+echo "Adding PATH: $PATH ..."
 export PATH=${TEACLAVE_TOOLCHAIN_BASE}/bin:$PATH
+export PATH=${TEACLAVE_TOOLCHAIN_BASE}/aarch64-linux-musl-cross/bin/:$PATH
 EOF
-    
+
     # Add interactive shell setup to .bashrc (NO profile sourcing to avoid circular dependency)
     cat >> ~/.bashrc << 'EOF'
 # Teaclave TrustZone SDK interactive shell setup

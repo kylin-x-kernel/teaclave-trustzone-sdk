@@ -23,7 +23,7 @@ use crate::Error;
 use crate::HeaderFileGenerator;
 use crate::RustEdition;
 use crate::TaConfig;
-use crate::{Linker, LinkerType};
+use crate::LinkerType;
 
 const DEFAULT_HEADER_FILE_NAME: &str = "user_ta_header.rs";
 
@@ -121,11 +121,14 @@ impl Builder {
         Ok(())
     }
 
-    fn link(&self, out_dir: PathBuf) -> Result<(), Error> {
+    fn link(&self, _out_dir: PathBuf) -> Result<(), Error> {
+        Ok(())
+        /*
         let linker = match self.linker_type.as_ref() {
             Option::Some(v) => Linker::new(v.clone()),
             Option::None => Linker::auto(),
         };
         linker.link_all(out_dir)
+        */
     }
 }

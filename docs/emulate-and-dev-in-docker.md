@@ -16,19 +16,23 @@ both the Normal World and Secure World environments.
 
 **Terminal A** (Main development terminal):
 ```bash
-# Pull the pre-built development environment
-$ docker pull teaclave/teaclave-trustzone-emulator-nostd-expand-memory:latest
-
 # Clone the repository
-$ git clone https://github.com/apache/teaclave-trustzone-sdk.git && \
+$ git clone -b kylin-starry https://github.com/kylin-x-kernel/teaclave-trustzone-sdk.git && \
   cd teaclave-trustzone-sdk
+
+# Pull the pre-built development environment
+$ docker pull kylin-starry/teaclave-trustzone-emulator-nostd-expand-memory:latest
+
+# Or you can build by yourself in our project
+# Note: should config proxy first if you are in a restricted network environment
+$ ./scripts/release/build_dev_docker.sh
 
 # Launch the development container
 $ docker run -it --rm \
   --name teaclave_dev_env \
   -v $(pwd):/root/teaclave_sdk_src \
   -w /root/teaclave_sdk_src \
-  teaclave/teaclave-trustzone-emulator-nostd-expand-memory:latest
+  kylin/starry-teaclave-trustzone-emulator-nostd-expand-memory:dev
 ```
 
 ## 2. Build the Hello World Example

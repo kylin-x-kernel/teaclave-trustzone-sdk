@@ -25,7 +25,7 @@ description = "An example of Rust OP-TEE TrustZone SDK."
 edition = "2018"
 
 [features]
-default = []
+default = ["std"]
 std = ["optee-utee/std", "optee-utee-sys/std"]
 
 [dependencies]

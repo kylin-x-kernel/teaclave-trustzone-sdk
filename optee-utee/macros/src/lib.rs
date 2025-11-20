@@ -57,11 +57,17 @@ pub fn ta_create(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     quote!(
         #[no_mangle]
-        pub extern "C" fn TA_CreateEntryPoint() -> optee_utee_sys::TEE_Result {
+        pub fn main() {
             match #ident() {
-                Ok(_) => optee_utee_sys::TEE_SUCCESS,
-                Err(e) => e.raw_code()
+                Ok(_) => {
+                    ;
+                }
+                Err(e) => {
+                    return;
+                }
             }
+            // TODO: register to vsock server
+            // TODO: register vsock IPC wait command:
         }
 
         #f
