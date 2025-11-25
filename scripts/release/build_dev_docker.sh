@@ -19,6 +19,9 @@
 
 set -e
 
+# Set proxy if needed
+PROXY_URL="http://127.0.0.1:7897"
+
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Switch to root path
@@ -32,29 +35,35 @@ OPTEE_VERSION_FILE="optee-version.txt"
 OPTEE_VER=$(cat "$OPTEE_VERSION_FILE")
 
 echo "Building Docker images for OP-TEE version: $OPTEE_VER"
+echo "Building Docker image with proxy: $PROXY_URL"
 
 # Build no-std Docker image
 docker build \
   -f "$DOCKERFILE" \
+  --network host \
   --build-arg OPTEE_VERSION="$OPTEE_VER" \
+  --build-arg HTTP_PROXY=$PROXY_URL \
+  --build-arg HTTPS_PROXY=$PROXY_URL \
+  --build-arg NO_PROXY=localhost,127.0.0.1 \
   --target no-std-build-env \
-  -t teaclave/teaclave-trustzone-emulator-nostd-expand-memory:optee-${OPTEE_VER} \
-  -t teaclave/teaclave-trustzone-emulator-nostd-expand-memory:latest \
+  -t kylin-starry/teaclave-trustzone-emulator-nostd-expand-memory:optee-${OPTEE_VER} \
+  -t kylin-starry/teaclave-trustzone-emulator-nostd-expand-memory:latest \
   .
 
+
 # Build std Docker image
-docker build \
-  -f "$DOCKERFILE" \
-  --build-arg OPTEE_VERSION="$OPTEE_VER" \
-  -t teaclave/teaclave-trustzone-emulator-std-expand-memory:optee-${OPTEE_VER} \
-  -t teaclave/teaclave-trustzone-emulator-std-expand-memory:latest \
-  .
+#docker build \
+#  -f "$DOCKERFILE" \
+#  --build-arg OPTEE_VERSION="$OPTEE_VER" \
+#  -t teaclave/teaclave-trustzone-emulator-std-expand-memory:optee-${OPTEE_VER} \
+#  -t teaclave/teaclave-trustzone-emulator-std-expand-memory:latest \
+#  .
 
 echo "Docker images built successfully!"
 echo ""
 echo "To push the images to Docker Hub, run:"
-echo "docker push teaclave/teaclave-trustzone-emulator-nostd-expand-memory:optee-${OPTEE_VER}"
-echo "docker push teaclave/teaclave-trustzone-emulator-nostd-expand-memory:latest"
-echo "docker push teaclave/teaclave-trustzone-emulator-std-expand-memory:optee-${OPTEE_VER}"
-echo "docker push teaclave/teaclave-trustzone-emulator-std-expand-memory:latest"
+echo "docker push kylin-starry/teaclave-trustzone-emulator-nostd-expand-memory:optee-${OPTEE_VER}:optee-${OPTEE_VER}"
+echo "docker push kylin-starry/teaclave-trustzone-emulator-nostd-expand-memory:latest"
+#echo "docker push kylin-starry/teaclave-trustzone-emulator-std-expand-memory:optee-${OPTEE_VER}"
+#echo "docker push kylin-starry/teaclave-trustzone-emulator-std-expand-memory:latest"
 
